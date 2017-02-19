@@ -18,8 +18,6 @@ import (
 )
 
 const (
-	// tplHome home page template
-	tplHome base.TplName = "home"
 	// tplExploreRepos explore repositories page template
 	tplExploreRepos base.TplName = "explore/repos"
 	// tplExploreUsers explore users page template
@@ -47,8 +45,18 @@ func Home(ctx *context.Context) {
 		return
 	}
 
-	ctx.Data["PageIsHome"] = true
-	ctx.HTML(200, tplHome)
+	ctx.Data["Title"] = ctx.Tr("explore")
+	ctx.Data["PageIsExplore"] = true
+	ctx.Data["PageIsExploreRepositories"] = true
+	//ctx.HTML(200, tplExploreRepos)
+
+	RenderRepoSearch(ctx, &RepoSearchOptions{
+		Counter:  models.CountRepositories,
+		Ranger:   models.GetRecentUpdatedRepositories,
+		PageSize: setting.UI.ExplorePagingNum,
+		Searcher: ctx.User,
+		TplName:  tplExploreRepos,
+	})
 }
 
 // RepoSearchOptions when calling search repositories
